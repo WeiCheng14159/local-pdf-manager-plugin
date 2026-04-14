@@ -339,22 +339,20 @@ async function batchRemove(items: Zotero.Item[]): Promise<void> {
 
   for (const att of toRemove) {
     try {
+      const parentID = att.parentItemID;
       const filePath = await att.getFilePathAsync();
       if (filePath) {
         const file = Zotero.File.pathToFile(filePath);
         if (file.exists()) {
           totalBytes += file.fileSize;
           file.remove(false);
-          done++;
-          // Reload so Zotero re-evaluates file existence before re-rendering
-          await att.reload([], true);
-          Zotero.Notifier.trigger("modify", "item", [att.id]);
-          if (att.parentItemID) {
-            const parent = Zotero.Items.get(att.parentItemID);
-            if (parent) await parent.reload([], true);
-            Zotero.Notifier.trigger("modify", "item", [att.parentItemID]);
-          }
         }
+      }
+      // Erase the attachment item from Zotero so it no longer shows in the UI
+      await att.eraseTx();
+      done++;
+      if (parentID) {
+        Zotero.Notifier.trigger("modify", "item", [parentID]);
       }
     } catch {
       // skip failures silently
