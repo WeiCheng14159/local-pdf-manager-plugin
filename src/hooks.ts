@@ -86,6 +86,18 @@ function getRegularItems(items: Zotero.Item[]): Zotero.Item[] {
 }
 
 /**
+ * Checks whether a regular item has any PDF attachment item (file may or may not exist).
+ */
+async function hasPdfAttachment(item: Zotero.Item): Promise<boolean> {
+  const attachmentIDs: number[] = item.getAttachments();
+  for (const id of attachmentIDs) {
+    const att = Zotero.Items.get(id);
+    if (att?.attachmentContentType === "application/pdf") return true;
+  }
+  return false;
+}
+
+/**
  * Checks whether a regular item has a PDF file on disk.
  */
 async function hasPdfOnDisk(item: Zotero.Item): Promise<boolean> {
@@ -166,9 +178,9 @@ async function downloadPdfsForSelected(): Promise<void> {
 async function downloadAllPdfs(): Promise<void> {
   const allItems = await getAllRegularItems();
 
-  // Count how many actually need a PDF
+  // Count how many actually need a PDF (skip if any PDF attachment item exists)
   const needsCount = (
-    await Promise.all(allItems.map(async (item) => !(await hasPdfOnDisk(item))))
+    await Promise.all(allItems.map(async (item) => !(await hasPdfAttachment(item))))
   ).filter(Boolean).length;
 
   if (!needsCount) {
@@ -198,10 +210,11 @@ async function downloadAllPdfs(): Promise<void> {
 }
 
 async function batchDownload(items: Zotero.Item[]): Promise<void> {
-  // Filter to items missing a PDF on disk
+  // Skip items that already have a PDF attachment item (even if file is missing on disk)
+  // to avoid creating duplicate attachments after a local PDF was removed.
   const needsPdf: Zotero.Item[] = [];
   for (const item of items) {
-    if (!(await hasPdfOnDisk(item))) {
+    if (!(await hasPdfAttachment(item))) {
       needsPdf.push(item);
     }
   }
@@ -339,20 +352,22 @@ async function batchRemove(items: Zotero.Item[]): Promise<void> {
 
   for (const att of toRemove) {
     try {
-      const parentID = att.parentItemID;
       const filePath = await att.getFilePathAsync();
       if (filePath) {
         const file = Zotero.File.pathToFile(filePath);
         if (file.exists()) {
           totalBytes += file.fileSize;
           file.remove(false);
+          done++;
+          // Reload so Zotero re-evaluates file existence before re-rendering
+          await att.reload([], true);
+          Zotero.Notifier.trigger("modify", "item", [att.id]);
+          if (att.parentItemID) {
+            const parent = Zotero.Items.get(att.parentItemID);
+            if (parent) await parent.reload([], true);
+            Zotero.Notifier.trigger("modify", "item", [att.parentItemID]);
+          }
         }
-      }
-      // Erase the attachment item from Zotero so it no longer shows in the UI
-      await att.eraseTx();
-      done++;
-      if (parentID) {
-        Zotero.Notifier.trigger("modify", "item", [parentID]);
       }
     } catch {
       // skip failures silently
