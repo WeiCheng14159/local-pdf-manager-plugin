@@ -359,12 +359,13 @@ async function batchRemove(items: Zotero.Item[]): Promise<void> {
           totalBytes += file.fileSize;
           file.remove(false);
           done++;
-          // Reload so Zotero re-evaluates file existence before re-rendering
-          await att.reload([], true);
+          // fileExists() checks the filesystem and updates Zotero's internal
+          // cache so the next re-render correctly grays out the icon.
+          // reload() is not enough — it only reads from the DB, which has no
+          // file-existence info for stored attachments.
+          await att.fileExists();
           Zotero.Notifier.trigger("modify", "item", [att.id]);
           if (att.parentItemID) {
-            const parent = Zotero.Items.get(att.parentItemID);
-            if (parent) await parent.reload([], true);
             Zotero.Notifier.trigger("modify", "item", [att.parentItemID]);
           }
         }
