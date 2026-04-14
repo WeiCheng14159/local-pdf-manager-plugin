@@ -1,7 +1,7 @@
 import { getString, initLocale } from "./utils/locale";
 import { createZToolkit } from "./utils/ztoolkit";
 
-const PLUGIN = "Local PDF Manager";
+const PLUGIN = "Zotero Local PDF Manager";
 
 async function onStartup() {
   await Promise.all([

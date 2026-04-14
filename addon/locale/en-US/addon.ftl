@@ -1,5 +1,5 @@
-startup-begin = Local PDF Manager is loading
-startup-finish = Local PDF Manager is ready
+startup-begin = Zotero Local PDF Manager is loading
+startup-finish = Zotero Local PDF Manager is ready
 menu-download-pdf = Download PDF
 menu-remove-pdf = Remove Local PDFs
 menu-download-all = Download All PDFs in Library

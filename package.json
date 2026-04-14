@@ -4,18 +4,18 @@
   "version": "0.1.0",
   "description": "Download or remove local PDF copies for Zotero papers",
   "config": {
-    "addonName": "Local PDF Manager",
-    "addonID": "localpdfmanager@zotero.local",
-    "addonRef": "localpdfmanager",
-    "addonInstance": "LocalPdfManager",
-    "prefsPrefix": "extensions.zotero.localpdfmanager"
+    "addonName": "Zotero Local PDF Manager",
+    "addonID": "zotero-local-pdf-manager@zotero.local",
+    "addonRef": "zotero-local-pdf-manager",
+    "addonInstance": "ZoteroLocalPdfManager",
+    "prefsPrefix": "extensions.zotero.zotero-local-pdf-manager"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WeiCheng14159/zotero-plugin-template.git"
+    "url": "git+https://github.com/WeiCheng14159/zotero-local-pdf-manager.git"
   },
   "author": "wei",
-  "homepage": "https://github.com/WeiCheng14159/zotero-plugin-template#readme",
+  "homepage": "https://github.com/WeiCheng14159/zotero-local-pdf-manager#readme",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "zotero-plugin serve",
