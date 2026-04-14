@@ -23,25 +23,25 @@ A Zotero plugin that lets you batch download or remove local PDF copies for item
 3. Click the gear icon and choose **Install Add-on From File…**
 4. Select the downloaded `.xpi` file.
 
-**Compatibility:** Zotero 7+ (6.999 – 8.*)
+**Compatibility:** Zotero 7+ (6.999 – 8.\*)
 
 ## Usage
 
 ### Download PDFs
 
-| Action | How |
-|---|---|
-| Download PDFs for selected items | Right-click selected items → **Download PDF** |
-| Download PDFs for the entire library | **Tools → Download All PDFs in Library** |
+| Action                               | How                                           |
+| ------------------------------------ | --------------------------------------------- |
+| Download PDFs for selected items     | Right-click selected items → **Download PDF** |
+| Download PDFs for the entire library | **Tools → Download All PDFs in Library**      |
 
 When triggered, the plugin searches for items without a local PDF attachment and attempts to download one using Zotero's built-in PDF resolver. A progress window shows `Downloading PDFs: X/Y (size)` as each item completes.
 
 ### Remove Local PDFs
 
-| Action | How |
-|---|---|
+| Action                                 | How                                                |
+| -------------------------------------- | -------------------------------------------------- |
 | Remove local copies for selected items | Right-click selected items → **Remove Local PDFs** |
-| Remove all local copies in the library | **Tools → Remove All Local PDFs in Library** |
+| Remove all local copies in the library | **Tools → Remove All Local PDFs in Library**       |
 
 Removing a local copy deletes the PDF file from disk but leaves the Zotero record and all metadata (title, authors, DOI, etc.) untouched. The completion dialog reports total disk space freed.
 
@@ -65,14 +65,14 @@ cp .env.example .env   # configure your local Zotero profile path
 
 ### Commands
 
-| Command | Description |
-|---|---|
-| `npm start` | Start dev server with hot reload |
-| `npm run build` | Production build (outputs XPI to `.scaffold/build/`) |
-| `npm test` | Run tests |
-| `npm run lint:check` | Check formatting and linting |
-| `npm run lint:fix` | Auto-fix formatting and linting issues |
-| `npm run release` | Bump version, build, and publish a GitHub release |
+| Command              | Description                                          |
+| -------------------- | ---------------------------------------------------- |
+| `npm start`          | Start dev server with hot reload                     |
+| `npm run build`      | Production build (outputs XPI to `.scaffold/build/`) |
+| `npm test`           | Run tests                                            |
+| `npm run lint:check` | Check formatting and linting                         |
+| `npm run lint:fix`   | Auto-fix formatting and linting issues               |
+| `npm run release`    | Bump version, build, and publish a GitHub release    |
 
 ### Project Structure
 
