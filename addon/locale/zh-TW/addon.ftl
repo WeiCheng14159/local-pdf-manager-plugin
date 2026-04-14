@@ -1,0 +1,14 @@
+startup-begin = Zotero 本機 PDF 管理員載入中
+startup-finish = Zotero 本機 PDF 管理員已就緒
+menu-download-pdf = 下載 PDF
+menu-remove-pdf = 移除本機 PDF
+menu-download-all = 下載資料庫中所有 PDF
+menu-remove-all = 移除資料庫中所有本機 PDF
+all-have-pdf = 所有已選取項目皆已有 PDF。
+no-local-pdf = 沒有本機 PDF 檔案可移除。
+download-progress = 正在下載 PDF：{ $done }/{ $total }（{ $size }）
+download-complete = 完成：已下載 { $done }/{ $total } 個 PDF（{ $size }）
+remove-progress = 正在移除本機 PDF：{ $done }/{ $total }（{ $size }）
+remove-complete = 已移除 { $done }/{ $total } 個本機 PDF（釋放 { $size }）
+confirm-download-title = 下載所有 PDF
+confirm-download-message = 將嘗試下載 { $count } 個 PDF。若您的資料庫較大，此操作可能需要較長時間並佔用大量磁碟空間。是否繼續？

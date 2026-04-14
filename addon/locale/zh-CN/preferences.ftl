@@ -1,5 +1,7 @@
-pref-title = 插件模板设置示例
+pref-title = 插件设置
 pref-enable =
-    .label = 开启
+    .label = 启用
 pref-input = 输入
-pref-help = { $name } Build { $version } { $time }
+pref-help = { $name } 版本 { $version } { $time }
+prefs-table-title = 标题
+prefs-table-detail = 详情
