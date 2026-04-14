@@ -18,10 +18,6 @@ export type FluentMessageId =
   | 'menu-download-pdf'
   | 'menu-remove-all'
   | 'menu-remove-pdf'
-  | 'menuitem-filemenulabel'
-  | 'menuitem-label'
-  | 'menuitem-submenulabel'
-  | 'menupopup-label'
   | 'no-local-pdf'
   | 'pref-enable'
   | 'pref-help'
@@ -29,10 +25,7 @@ export type FluentMessageId =
   | 'pref-title'
   | 'prefs-table-detail'
   | 'prefs-table-title'
-  | 'prefs-title'
   | 'remove-complete'
   | 'remove-progress'
   | 'startup-begin'
-  | 'startup-finish'
-  | 'tabpanel-lib-tab-label'
-  | 'tabpanel-reader-tab-label';
+  | 'startup-finish';
