@@ -1,7 +1,7 @@
 {
   "name": "zotero-local-pdf-manager",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Download or remove local PDF copies for Zotero papers",
   "config": {
     "addonName": "Zotero Local PDF Manager",
