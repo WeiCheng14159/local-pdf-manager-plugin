@@ -28,30 +28,12 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 
   const icon = `chrome://${addon.data.config.addonRef}/content/icons/favicon@0.5x.png`;
 
-  // Right-click: Download PDF (selected)
-  ztoolkit.Menu.register("item", {
-    tag: "menuitem",
-    id: "lcm-download-pdf",
-    label: getString("menu-download-pdf"),
-    commandListener: () => downloadPdfsForSelected(),
-    icon,
-  });
-
   // Right-click: Remove Local PDFs (selected)
   ztoolkit.Menu.register("item", {
     tag: "menuitem",
     id: "lcm-remove-local-pdf",
     label: getString("menu-remove-pdf"),
     commandListener: () => removeLocalPdfsForSelected(),
-    icon,
-  });
-
-  // Tools menu: Download All PDFs in Library
-  ztoolkit.Menu.register("menuTools", {
-    tag: "menuitem",
-    id: "lcm-download-all",
-    label: getString("menu-download-all"),
-    commandListener: () => downloadAllPdfs(),
     icon,
   });
 
@@ -83,48 +65,6 @@ function onShutdown(): void {
  */
 function getRegularItems(items: Zotero.Item[]): Zotero.Item[] {
   return items.filter((item) => item.isRegularItem());
-}
-
-/**
- * Checks whether a regular item has a PDF file on disk.
- */
-async function hasPdfOnDisk(item: Zotero.Item): Promise<boolean> {
-  const attachmentIDs: number[] = item.getAttachments();
-  for (const id of attachmentIDs) {
-    const att = Zotero.Items.get(id);
-    if (att?.attachmentContentType !== "application/pdf") continue;
-    const filePath = await att.getFilePathAsync();
-    if (filePath) return true;
-  }
-  return false;
-}
-
-/**
- * Erases ghost PDF attachment records (no file on disk), re-parenting any
- * child notes to the parent item first so they are not lost.
- *
- * Called before addAvailablePDF so it does not skip the item (Zotero skips
- * items that already have a PDF attachment record, even a ghost one) and does
- * not create a duplicate alongside the stale ghost record.
- */
-async function clearGhostPdfAttachments(item: Zotero.Item): Promise<void> {
-  for (const id of item.getAttachments()) {
-    const att = Zotero.Items.get(id);
-    if (att?.attachmentContentType !== "application/pdf") continue;
-    const filePath = await att.getFilePathAsync();
-    if (filePath) continue; // has a real file — not a ghost
-
-    // Move child notes up to the parent item before erasing the ghost
-    const noteIds: number[] = att.getNotes ? att.getNotes() : [];
-    for (const noteId of noteIds) {
-      const note = Zotero.Items.get(noteId);
-      if (!note) continue;
-      note.parentItemID = item.id;
-      await note.saveTx();
-    }
-
-    await att.eraseTx();
-  }
 }
 
 /**
@@ -166,157 +106,6 @@ function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024 * 1024)
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-/**
- * Returns the file size in bytes for a PDF attachment, or 0 if unavailable.
- */
-async function getPdfFileSize(att: Zotero.Item): Promise<number> {
-  try {
-    const filePath = await att.getFilePathAsync();
-    if (!filePath) return 0;
-    const file = Zotero.File.pathToFile(filePath);
-    return file.exists() ? file.fileSize : 0;
-  } catch {
-    return 0;
-  }
-}
-
-// ── Download operations ──────────────────────────────────────
-
-async function downloadPdfsForSelected(): Promise<void> {
-  const zoteroPane = ztoolkit.getGlobal("ZoteroPane");
-  const selectedItems = zoteroPane.getSelectedItems() as Zotero.Item[];
-  if (!selectedItems.length) return;
-  await batchDownload(getRegularItems(selectedItems));
-}
-
-async function downloadAllPdfs(): Promise<void> {
-  const allItems = await getAllRegularItems();
-
-  // Items that need a PDF: no PDF file on disk
-  const needsPdf: Zotero.Item[] = [];
-  for (const item of allItems) {
-    if (!(await hasPdfOnDisk(item))) {
-      needsPdf.push(item);
-    }
-  }
-
-  if (!needsPdf.length) {
-    new ztoolkit.ProgressWindow(PLUGIN, { closeOnClick: true })
-      .createLine({
-        text: getString("all-have-pdf"),
-        type: "success",
-        progress: 100,
-      })
-      .show()
-      .startCloseTimer(3000);
-    return;
-  }
-
-  // Confirmation dialog
-  const confirmed = Services.prompt.confirm(
-    Zotero.getMainWindow() as unknown as mozIDOMWindowProxy,
-    getString("confirm-download-title"),
-    getString("confirm-download-message", {
-      args: { count: String(needsPdf.length) },
-    }),
-  );
-  if (!confirmed) return;
-
-  ztoolkit.log(`[${PLUGIN}] Download All: ${needsPdf.length} PDFs to download`);
-  await batchDownload(needsPdf);
-}
-
-async function batchDownload(items: Zotero.Item[]): Promise<void> {
-  // Skip items that already have a PDF file on disk.
-  const needsPdf: Zotero.Item[] = [];
-  for (const item of items) {
-    if (!(await hasPdfOnDisk(item))) {
-      needsPdf.push(item);
-    }
-  }
-
-  if (!needsPdf.length) {
-    new ztoolkit.ProgressWindow(PLUGIN, { closeOnClick: true })
-      .createLine({
-        text: getString("all-have-pdf"),
-        type: "success",
-        progress: 100,
-      })
-      .show()
-      .startCloseTimer(3000);
-    return;
-  }
-
-  const total = needsPdf.length;
-  let done = 0;
-  let failed = 0;
-  let totalBytes = 0;
-
-  const pw = new ztoolkit.ProgressWindow(PLUGIN, {
-    closeOnClick: false,
-    closeTime: -1,
-  })
-    .createLine({
-      text: getString("download-progress", {
-        args: { done: "0", total: String(total), size: "0 B" },
-      }),
-      type: "default",
-      progress: 0,
-    })
-    .show();
-
-  for (const item of needsPdf) {
-    try {
-      // Re-parent notes on ghost attachments then erase them so addAvailablePDF
-      // neither skips the item nor creates a duplicate alongside the ghost.
-      await clearGhostPdfAttachments(item);
-      // 60s timeout per item to avoid hanging on network issues
-      await Promise.race([
-        Zotero.Attachments.addAvailablePDF(item),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("timeout")), 60000),
-        ),
-      ]);
-      done++;
-      // Measure the newly downloaded file and refresh UI
-      const attachmentIDs: number[] = item.getAttachments();
-      for (const id of attachmentIDs) {
-        const att = Zotero.Items.get(id);
-        if (att?.attachmentContentType === "application/pdf") {
-          totalBytes += await getPdfFileSize(att);
-          Zotero.Notifier.trigger("modify", "item", [att.id]);
-        }
-      }
-      Zotero.Notifier.trigger("modify", "item", [item.id]);
-    } catch {
-      failed++;
-    }
-    pw.changeLine({
-      text: getString("download-progress", {
-        args: {
-          done: String(done + failed),
-          total: String(total),
-          size: formatSize(totalBytes),
-        },
-      }),
-      progress: Math.round(((done + failed) / total) * 100),
-    });
-  }
-
-  pw.changeLine({
-    text: getString("download-complete", {
-      args: {
-        done: String(done),
-        total: String(total),
-        size: formatSize(totalBytes),
-      },
-    }),
-    type: done > 0 ? "success" : "fail",
-    progress: 100,
-  });
-  pw.startCloseTimer(5000);
 }
 
 // ── Remove operations ────────────────────────────────────────

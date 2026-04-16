@@ -6,15 +6,14 @@
 [![Zotero 7](https://img.shields.io/badge/Zotero-7-green.svg)](https://www.zotero.org/)
 [![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/WeiCheng14159/local-pdf-manager-plugin/releases)
 
-A Zotero plugin that lets you batch download or remove local PDF copies for items in your library — without losing any bibliographic metadata.
+A Zotero plugin that lets you batch remove local PDF copies for items in your library — without losing any bibliographic metadata.
 
 ## Features
 
-- **Download PDFs** for selected items or your entire library in one click
 - **Remove local copies** to reclaim disk space while keeping metadata and cloud sync intact
 - **Progress tracking** with real-time feedback (item count and total file size)
 - **Safe batch operations** — failures on individual items are logged but do not block the rest
-- **Localization** — English (`en-US`) and Simplified Chinese (`zh-CN`) supported
+- **Localization** — English (`en-US`), Simplified Chinese (`zh-CN`), and Traditional Chinese (`zh-TW`) supported
 
 ## Installation
 
@@ -27,15 +26,6 @@ A Zotero plugin that lets you batch download or remove local PDF copies for item
 
 ## Usage
 
-### Download PDFs
-
-| Action                               | How                                           |
-| ------------------------------------ | --------------------------------------------- |
-| Download PDFs for selected items     | Right-click selected items → **Download PDF** |
-| Download PDFs for the entire library | **Tools → Download All PDFs in Library**      |
-
-When triggered, the plugin searches for items without a local PDF attachment and attempts to download one using Zotero's built-in PDF resolver. A progress window shows `Downloading PDFs: X/Y (size)` as each item completes.
-
 ### Remove Local PDFs
 
 | Action                                 | How                                                |
@@ -45,7 +35,7 @@ When triggered, the plugin searches for items without a local PDF attachment and
 
 Removing a local copy deletes the PDF file from disk but leaves the Zotero record and all metadata (title, authors, DOI, etc.) untouched. The completion dialog reports total disk space freed.
 
-> **Tip:** This is useful before switching to Zotero cloud sync — strip local copies first, then let Zotero re-download them on demand.
+> **Tip:** This is useful before switching to Zotero cloud sync — strip local copies first, then let Zotero re-download them on demand via its built-in sync.
 
 ## Development
 

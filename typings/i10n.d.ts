@@ -3,19 +3,12 @@
 /* eslint-disable */
 // @ts-nocheck
 export type FluentMessageId =
-  | 'all-have-pdf'
-  | 'confirm-download-message'
-  | 'confirm-download-title'
-  | 'download-complete'
-  | 'download-progress'
   | 'item-info-row-example-label'
   | 'item-section-example1-head-text'
   | 'item-section-example1-sidenav-tooltip'
   | 'item-section-example2-button-tooltip'
   | 'item-section-example2-head-text'
   | 'item-section-example2-sidenav-tooltip'
-  | 'menu-download-all'
-  | 'menu-download-pdf'
   | 'menu-remove-all'
   | 'menu-remove-pdf'
   | 'no-local-pdf'
@@ -26,6 +19,4 @@ export type FluentMessageId =
   | 'prefs-table-detail'
   | 'prefs-table-title'
   | 'remove-complete'
-  | 'remove-progress'
-  | 'startup-begin'
-  | 'startup-finish';
+  | 'remove-progress';

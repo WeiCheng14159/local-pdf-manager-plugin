@@ -1,14 +1,5 @@
-startup-begin = Zotero Local PDF Manager is loading
-startup-finish = Zotero Local PDF Manager is ready
-menu-download-pdf = Download PDF
 menu-remove-pdf = Remove Local PDFs
-menu-download-all = Download All PDFs in Library
 menu-remove-all = Remove All Local PDFs in Library
-all-have-pdf = All selected items already have PDFs.
 no-local-pdf = No local PDF files to remove.
-download-progress = Downloading PDFs: { $done }/{ $total } ({ $size })
-download-complete = Done: { $done }/{ $total } PDFs downloaded ({ $size })
 remove-progress = Removing local PDFs: { $done }/{ $total } ({ $size })
 remove-complete = Removed { $done }/{ $total } local PDFs ({ $size } freed)
-confirm-download-title = Download All PDFs
-confirm-download-message = This will attempt to download { $count } PDFs. This may take a long time and use significant disk space if you have a large library. Continue?

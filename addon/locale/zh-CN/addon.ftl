@@ -1,14 +1,5 @@
-startup-begin = Zotero 本地 PDF 管理器加载中
-startup-finish = Zotero 本地 PDF 管理器已就绪
-menu-download-pdf = 下载 PDF
 menu-remove-pdf = 删除本地 PDF
-menu-download-all = 下载库中所有 PDF
 menu-remove-all = 删除库中所有本地 PDF
-all-have-pdf = 所有选中条目已有 PDF。
 no-local-pdf = 没有本地 PDF 文件可删除。
-download-progress = 正在下载 PDF：{ $done }/{ $total }（{ $size }）
-download-complete = 完成：已下载 { $done }/{ $total } 个 PDF（{ $size }）
 remove-progress = 正在删除本地 PDF：{ $done }/{ $total }（{ $size }）
 remove-complete = 已删除 { $done }/{ $total } 个本地 PDF（节省 { $size }）
-confirm-download-title = 下载所有 PDF
-confirm-download-message = 将尝试下载 { $count } 个 PDF。如果您的库较大，这可能需要较长时间并占用大量磁盘空间。是否继续？
