@@ -27,24 +27,45 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
   );
 
   const icon = `chrome://${addon.data.config.addonRef}/content/icons/favicon@0.5x.png`;
+  const doc = win.document;
 
   // Right-click: Remove Local PDFs (selected)
-  ztoolkit.Menu.register("item", {
-    tag: "menuitem",
-    id: "lcm-remove-local-pdf",
-    label: getString("menu-remove-pdf"),
-    commandListener: () => removeLocalPdfsForSelected(),
-    icon,
-  });
+  const itemMenu = doc.getElementById("zotero-itemmenu");
+  if (itemMenu) {
+    ztoolkit.UI.appendElement(
+      {
+        tag: "menuitem",
+        id: "lcm-remove-local-pdf",
+        attributes: {
+          label: getString("menu-remove-pdf"),
+          image: icon,
+          class: "menuitem-iconic",
+        },
+        listeners: [
+          { type: "command", listener: () => removeLocalPdfsForSelected() },
+        ],
+      },
+      itemMenu,
+    );
+  }
 
   // Tools menu: Remove All Local PDFs in Library
-  ztoolkit.Menu.register("menuTools", {
-    tag: "menuitem",
-    id: "lcm-remove-all",
-    label: getString("menu-remove-all"),
-    commandListener: () => removeAllLocalPdfs(),
-    icon,
-  });
+  const toolsMenuPopup = doc.getElementById("menu_ToolsPopup");
+  if (toolsMenuPopup) {
+    ztoolkit.UI.appendElement(
+      {
+        tag: "menuitem",
+        id: "lcm-remove-all",
+        attributes: {
+          label: getString("menu-remove-all"),
+          image: icon,
+          class: "menuitem-iconic",
+        },
+        listeners: [{ type: "command", listener: () => removeAllLocalPdfs() }],
+      },
+      toolsMenuPopup,
+    );
+  }
 }
 
 async function onMainWindowUnload(_win: Window): Promise<void> {
@@ -163,21 +184,19 @@ async function batchRemove(items: Zotero.Item[]): Promise<void> {
   for (const att of toRemove) {
     try {
       const filePath = await att.getFilePathAsync();
-      if (filePath) {
-        const file = Zotero.File.pathToFile(filePath);
-        if (file.exists()) {
-          totalBytes += file.fileSize;
-          file.remove(false);
-          done++;
-          // fileExists() checks the filesystem and updates Zotero's internal
-          // cache so the next re-render correctly grays out the icon.
-          // reload() is not enough — it only reads from the DB, which has no
-          // file-existence info for stored attachments.
-          await att.fileExists();
-          Zotero.Notifier.trigger("modify", "item", [att.id]);
-          if (att.parentItemID) {
-            Zotero.Notifier.trigger("modify", "item", [att.parentItemID]);
-          }
+      if (filePath && (await IOUtils.exists(filePath))) {
+        const stat = await IOUtils.stat(filePath);
+        totalBytes += stat.size ?? 0;
+        await IOUtils.remove(filePath);
+        done++;
+        // fileExists() checks the filesystem and updates Zotero's internal
+        // cache so the next re-render correctly grays out the icon.
+        // reload() is not enough — it only reads from the DB, which has no
+        // file-existence info for stored attachments.
+        await att.fileExists();
+        await Zotero.Notifier.trigger("modify", "item", [att.id]);
+        if (att.parentItemID) {
+          await Zotero.Notifier.trigger("modify", "item", [att.parentItemID]);
         }
       }
     } catch {

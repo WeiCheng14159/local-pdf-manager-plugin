@@ -3,7 +3,7 @@
 [![CI](https://github.com/WeiCheng14159/local-pdf-manager-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/WeiCheng14159/local-pdf-manager-plugin/actions/workflows/ci.yml)
 [![Release](https://github.com/WeiCheng14159/local-pdf-manager-plugin/actions/workflows/release.yml/badge.svg)](https://github.com/WeiCheng14159/local-pdf-manager-plugin/releases)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
-[![Zotero 7](https://img.shields.io/badge/Zotero-7-green.svg)](https://www.zotero.org/)
+[![Zotero 7+](https://img.shields.io/badge/Zotero-7%2B-green.svg)](https://www.zotero.org/)
 [![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](https://github.com/WeiCheng14159/local-pdf-manager-plugin/releases)
 
 A Zotero plugin that lets you batch remove local PDF copies for items in your library — without losing any bibliographic metadata.
@@ -22,7 +22,7 @@ A Zotero plugin that lets you batch remove local PDF copies for items in your li
 3. Click the gear icon and choose **Install Add-on From File…**
 4. Select the downloaded `.xpi` file.
 
-**Compatibility:** Zotero 7+ (6.999 – 8.\*)
+**Compatibility:** Zotero 7, 8, and 9 (6.999 – 9.\*)
 
 ## Usage
 
